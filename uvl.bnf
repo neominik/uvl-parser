@@ -1,0 +1,42 @@
+FeatureModel = Ns? Imports? Features Constraints?
+
+Ns = <'ns'> REF
+Imports = <'imports'> (<indent> Import+ <dedent>)?
+Import = REF (<'as'> As)? (<'refer'> Refer)?
+As = ID
+Refer = (<'['> (ID <','?>)* <']'>) | 'all'
+
+Features = <'features'> Children?
+<Children> = <indent> FeatureSpec+ <dedent>
+FeatureSpec = REF Attributes? Groups?
+Attributes = (<'{'> <'}'>) | (<'{'> Attribute (<','> Attribute)* <'}'>)
+Attribute = Key Value?
+Key = ID
+Value = Boolean | Number | String | Attributes | Vector | Constraint
+Boolean = 'true' | 'false'
+Number = #'[+-]?(0|[1-9]\d*)(\.\d*)?([eE][+-]?\d+)?'
+String = <'"'> #'(?:[^"\\\n]|\\.)*' <'"'>
+Vector = <'['> (Value <','?>)* <']'>
+Groups = <indent> Group* <dedent>
+Group = ('or' | 'alternative' | 'mandatory' | 'optional') Children?
+
+
+Constraints = <'constraints'> (<indent> Constraint+ <dedent>)?
+<Constraint> = disj-impl | Equiv
+Equiv = Constraint <'<=>'> disj-impl
+<disj-impl> = disj | Impl
+Impl = disj-impl <'=>'> disj
+<disj> = conj | Or
+Or = disj <'|'> conj
+<conj> = term-not | And
+And = conj <'&'> term-not
+<term-not> = term | Not
+Not = <'!'> term
+<term> = REF | <'('> Constraint <')'>
+
+
+indent = '_{_'
+dedent = '_}_'
+<strictID> = #'(?!alternative|or|features|constraints|true|false|as|refer)[a-zA-Z][a-zA-Z_0-9]*'
+<ID> = #'(?!true|false)[a-zA-Z][a-zA-Z_0-9]*'
+REF = (ID <'.'>)* strictID
