@@ -7,5 +7,6 @@
                  [instaparse "1.4.10"]
                  [com.wjoel/clj-bean "0.2.1"]]
   :repl-options {:init-ns de.neominik.uvl.parser}
-  :aot :all
+  :profiles {:uberjar {:prep-tasks ["compile" "javac" "compile"]
+                       :aot :all}}
   :java-source-paths ["java"])

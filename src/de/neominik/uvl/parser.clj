@@ -1,7 +1,8 @@
 (ns de.neominik.uvl.parser
   (:require [instaparse.core :as insta]
             [clojure.string :as s]
-            [de.neominik.uvl.transform :refer :all]))
+            [de.neominik.uvl.transform :refer :all])
+  (:import [de.neominik.uvl.ast ParseError]))
 
 (def ^:private indent "_{_")
 (def ^:private dedent "_}_")
@@ -88,6 +89,17 @@
 
 (def ws (insta/parser "ws = #'[\\s]+'"))
 (def file "uvl.bnf")
+(def parser (insta/parser (slurp file) :auto-whitespace ws))
+
+(defn- ->ParseError [{:keys [line column text reason]}]
+  (ParseError. line column text (map :expecting reason)))
+
+(defn parse [s]
+  (let [tree (insta/parse parser (pre-lex s))
+        transformed (insta/transform transform-map tree)]
+    (if (insta/failure? transformed)
+      (->ParseError transformed) 
+      transformed)))
 
 (defn p [s]
   (let [parser (insta/parser (slurp file) :auto-whitespace ws)

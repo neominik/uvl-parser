@@ -47,3 +47,9 @@
 (defb Equiv
   [[Object left]
    [Object right]])
+
+(defb ParseError
+  [[int line]
+   [int column]
+   [String text]
+   [java.util.List expected]])
