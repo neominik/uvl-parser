@@ -1,4 +1,4 @@
-FeatureModel = Ns? Imports? Features Constraints?
+FeatureModel = Ns? Imports? Features? Constraints?
 
 Ns = <'ns'> REF
 Imports = <'imports'> (<indent> Import+ <dedent>)?
