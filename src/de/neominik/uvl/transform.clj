@@ -18,7 +18,7 @@
 (defn xf-featuremodel [& kvs]
   (let [{:keys [Ns imports features constraints] :or {imports [] features [] constraints []}} (into {} kvs)
         ns (or Ns (some-> (first features) .getName) "")]
-    (UVLModel. ns imports features constraints)))
+    (UVLModel. ns (into-array Import imports) (into-array Feature features) (into-array Object constraints))))
 
 (defn xf-import
   ([namespace] (Import. namespace namespace))
@@ -29,7 +29,7 @@
 
 (defn xf-feature [name & kvs]
   (let [{:keys [attributes groups] :or {attributes {} groups []}} (into {} kvs)]
-    (Feature. name attributes groups)))
+    (Feature. name attributes (into-array Group groups))))
 (defn xf-features
   ([& features] [:features features])
   ([] [:features []]))
@@ -40,7 +40,7 @@
 (defn xf-attributes [& keyvals]
   [:attributes (into {} keyvals)])
 
-(defn xf-group [type & children] (Group. type children))
+(defn xf-group [type & children] (doto (Group.) (.setType type) (.setChildren (into-array Feature children))))
 (defn xf-groups [& groups]
   [:groups groups])
 

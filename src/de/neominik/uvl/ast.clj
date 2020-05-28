@@ -10,24 +10,25 @@
         print-on-repl `(defmethod print-method ~qualified-class-name ~'[it w] ~'(.write w (.toString it)))]
     `(~@code ~toStringImpl ~print-on-repl)))
 
-(defb UVLModel
-  [[String namespace]
-   [java.util.List imports]
-   [java.util.List rootFeatures]
-   [java.util.List constraints]])
-
 (defb Import
   [[String namespace]
    [String alias]])
 
+(gen-class :name de.neominik.uvl.ast.Group)
 (defb Feature
   [[String name]
    [java.util.Map attributes]
-   [java.util.List groups]])
+   ["[Lde.neominik.uvl.ast.Group;" groups]])
+
+(defb UVLModel
+  [[String namespace]
+   ["[Lde.neominik.uvl.ast.Import;" imports]
+   ["[Lde.neominik.uvl.ast.Feature;" rootFeatures]
+   ["[Ljava.lang.Object;" constraints]])
 
 (defb Group
   [[String type]
-   [java.util.List children]])
+   ["[Lde.neominik.uvl.ast.Feature;" children]])
 
 (defb Not
   [[Object child]])
