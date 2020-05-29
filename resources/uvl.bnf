@@ -32,7 +32,8 @@ Or = disj <'|'> conj
 And = conj <'&'> term-not
 <term-not> = term | Not
 Not = <'!'> term
-<term> = REF | <'('> Constraint <')'>
+<term> = Reference | <'('> Constraint <')'>
+Reference = REF
 
 
 indent = '_{_'

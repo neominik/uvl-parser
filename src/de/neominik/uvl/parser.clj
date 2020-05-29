@@ -2,7 +2,8 @@
   (:require [instaparse.core :as insta]
             [clojure.string :as s]
             [de.neominik.uvl.transform :refer :all])
-  (:import [de.neominik.uvl.ast ParseError]))
+  (:import [de.neominik.uvl.ast ParseError UVLModel]
+           [java.io File]))
 
 (def ^:private indent "_{_")
 (def ^:private dedent "_}_")
@@ -94,12 +95,46 @@
 (defn- ->ParseError [{:keys [line column text reason]}]
   (ParseError. line column text (map :expecting reason)))
 
-(defn parse [s]
-  (let [tree (insta/parse parser (pre-lex s))
-        transformed (insta/transform transform-map tree)]
-    (if (insta/failure? transformed)
-      (->ParseError transformed) 
+(defn file-loader
+  ([] (file-loader (str (.getAbsolutePath (File. ".")) "/")))
+  ([absolute]
+   (fn [ns]
+     (let [relative (str (s/replace ns \. \/) ".uvl")
+           path (str absolute "/" relative)]
+       (slurp path)))))
+
+(def ^:dynamic *callback*)
+
+(defn parse-submodel [s nsp nsps]
+  (when-not (apply distinct? nsps) (throw (ex-info "Cyclic dependency" {:error (ParseError. 1 1 (str "Cyclic dependency detected! " nsps) [])})))
+  (binding [*nsp* nsp]
+    (let [tree (insta/parse parser (pre-lex s))
+          transformed (insta/transform transform-map tree)]
+      (when (insta/failure? transformed)
+        (throw (ex-info "Parsing Failed" {:error (->ParseError transformed)})))
+      (->> transformed .getImports (into [])
+           (map #(parse-submodel (*callback* (.getNamespace %)) (str *nsp* (.getAlias %) ".") (conj nsps (.getNamespace %))))
+           (into-array UVLModel)
+           (.setSubmodels transformed))
       transformed)))
+
+(defn parse
+  ([s]
+   (parse s (file-loader)))
+  ([s import-callback]
+   (binding [*features* (atom {})
+             *constraints* (atom [])
+             *callback* import-callback]
+     (try
+       (let [result (parse-submodel s "" [""])]
+         (if (instance? UVLModel result)
+           (do
+             (doto result
+               (.setAllFeatures @*features*)
+               (.setConstraints (into-array Object @*constraints*)))
+             result)
+           result))
+       (catch Exception e (.printStackTrace e) (:error (ex-data e)))))))
 
 (defn p [s]
   (let [parser (insta/parser (slurp file) :auto-whitespace ws)

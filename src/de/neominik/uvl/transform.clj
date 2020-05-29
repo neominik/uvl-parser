@@ -12,13 +12,21 @@
             Impl
             Equiv]))
 
+(def ^:dynamic *features*)
+(def ^:dynamic *constraints*)
+(def ^:dynamic *nsp*)
+
 (defn xf-ref [& ids] ;TODO resolve references
   (s/join "." ids))
 
 (defn xf-featuremodel [& kvs]
   (let [{:keys [Ns imports features constraints] :or {imports [] features [] constraints []}} (into {} kvs)
         ns (or Ns (some-> (first features) .getName) "")]
-    (UVLModel. ns (into-array Import imports) (into-array Feature features) (into-array Object constraints))))
+    (doto (UVLModel.)
+      (.setNamespace ns)
+      (.setImports (into-array Import imports))
+      (.setRootFeatures (into-array Feature features))
+      (.setConstraints (into-array Object constraints)))))
 
 (defn xf-import
   ([namespace] (Import. namespace namespace))
@@ -28,8 +36,11 @@
   ([] [:imports []]))
 
 (defn xf-feature [name & kvs]
-  (let [{:keys [attributes groups] :or {attributes {} groups []}} (into {} kvs)]
-    (Feature. name attributes (into-array Group groups))))
+  (let [{:keys [attributes groups] :or {attributes {} groups []}} (into {} kvs)
+        qf-name (str *nsp* name)
+        feature (Feature. qf-name attributes (into-array Group groups))]
+    (swap! *features* assoc qf-name feature)
+    feature))
 (defn xf-features
   ([& features] [:features features])
   ([] [:features []]))
@@ -45,8 +56,11 @@
   [:groups groups])
 
 (defn xf-constraints
-  ([& constraints] [:constraints constraints])
+  ([& constraints]
+   (swap! *constraints* concat constraints)
+   [:constraints constraints])
   ([] [:constraints []]))
+(defn xf-reference [s] (str *nsp* s))
 (defn xf-not [x] (Not. x))
 (defn xf-and [x y] (And. x y))
 (defn xf-or [x y] (Or. x y))
@@ -71,6 +85,7 @@
                     :Groups xf-groups
 
                     :Constraints xf-constraints
+                    :Reference xf-reference
                     :Not xf-not
                     :And xf-and
                     :Or xf-or

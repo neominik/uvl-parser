@@ -20,10 +20,13 @@
    [java.util.Map attributes]
    ["[Lde.neominik.uvl.ast.Group;" groups]])
 
+(gen-class :name de.neominik.uvl.ast.UVLModel)
 (defb UVLModel
   [[String namespace]
    ["[Lde.neominik.uvl.ast.Import;" imports]
    ["[Lde.neominik.uvl.ast.Feature;" rootFeatures]
+   [java.util.Map allFeatures]
+   ["[Lde.neominik.uvl.ast.UVLModel;" submodels]
    ["[Ljava.lang.Object;" constraints]])
 
 (defb Group
