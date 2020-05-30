@@ -93,7 +93,7 @@
 (def parser (insta/parser (slurp file) :auto-whitespace ws))
 
 (defn- ->ParseError [{:keys [line column text reason]}]
-  (ParseError. line column text (map :expecting reason)))
+  (ParseError. line column text (map (comp str :expecting) reason)))
 
 (defn file-loader
   ([] (file-loader (str (.getAbsolutePath (File. ".")) "/")))
@@ -139,7 +139,7 @@
 (defn p [s]
   (let [parser (insta/parser (slurp file) :auto-whitespace ws)
         parses (insta/parses parser (pre-lex s))
-        ps (insta/transform transform-map parses)]
+        ps (insta/transform {} parses)]
     (if (insta/failure? ps)
       (insta/get-failure ps)
       (if (> (count ps) 1)
