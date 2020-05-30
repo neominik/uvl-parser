@@ -10,4 +10,5 @@
   :repl-options {:init-ns de.neominik.uvl.parser}
   :profiles {:uberjar {:prep-tasks ["compile" "javac" "compile"]
                        :aot :all}}
-  :java-source-paths ["java"])
+  :java-source-paths ["java"]
+  :javac-options ["-target" "1.8" "-source" "1.8"])
