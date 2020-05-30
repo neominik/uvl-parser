@@ -79,7 +79,7 @@
                     :Value identity
                     :Boolean clojure.edn/read-string
                     :Number clojure.edn/read-string
-                    :String identity
+                    :String clojure.edn/read-string
                     :Vector vector
                     :Group xf-group
                     :Groups xf-groups
