@@ -1,12 +1,13 @@
 (ns de.neominik.uvl.ast
-  (:require [clj-bean.core :refer [defbean]]))
+  (:require [clj-bean.core :refer [defbean]]
+            [de.neominik.uvl.printer :refer :all]))
 
 (defmacro defb [class-name typed-fields]
   (let [qualified-class-name (symbol (str "de.neominik.uvl.ast." class-name))
         [_ gen :as code] (macroexpand `(defbean ~qualified-class-name ~typed-fields))
         opts (apply hash-map (rest gen))
         toStringName (symbol (str (:prefix opts) "toString"))
-        toStringImpl `(defn ~toStringName [~'this] (str (bean ~'this)))
+        toStringImpl `(defn ~toStringName [~'this] (~(symbol (str (:prefix opts) "prn")) ~'this))
         print-on-repl `(defmethod print-method ~qualified-class-name ~'[it w] ~'(.write w (.toString it)))]
     `(~@code ~toStringImpl ~print-on-repl)))
 

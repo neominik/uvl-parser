@@ -1,6 +1,6 @@
 # UVL - Universal Variability Language
 
-This is a small default library used to parse the Universal Variability Language (UVL).
+This is a small default library used to parse and print the Universal Variability Language (UVL).
 It is written in Clojure, but can also be used from any JVM language, as it exposes a Java API.
 
 Under the hood it uses [instaparse](https://github.com/Engelberg/instaparse) as the parsing library.
@@ -28,6 +28,8 @@ The `standalone.jar` includes all dependencies, while the other jar ships only t
 
 ## Usage from Java
 The class `de.neominik.uvl.UVLParser` exposes the static method `parse(String)` which will return an instance of a `de.neominik.uvl.UVLModel` on success or a `de.neominik.uvl.ParseError` when the input didn't comply to the grammar.
+
+Printing is implemented in the `toString()`methods of the different model elements in the `UVLModel`.
 
 ## License
 

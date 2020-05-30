@@ -134,7 +134,7 @@
                (.setConstraints (into-array Object @*constraints*)))
              result)
            result))
-       (catch Exception e (.printStackTrace e) (:error (ex-data e)))))))
+       (catch Exception e (:error (ex-data e)))))))
 
 (defn p [s]
   (let [parser (insta/parser (slurp file) :auto-whitespace ws)
