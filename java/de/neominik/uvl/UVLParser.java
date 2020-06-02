@@ -6,6 +6,7 @@ import de.neominik.uvl.ast.Feature;
 import de.neominik.uvl.ast.ParseError;
 import de.neominik.uvl.ast.UVLModel;
 import java.util.function.Function;
+import java.util.Map;
 
 public class UVLParser {
 
@@ -47,5 +48,13 @@ public class UVLParser {
    */
   public static Feature resolve(Feature f, UVLModel m) {
   	return (Feature) m.getAllFeatures().get(f.getName());
+  }
+
+  /**
+   * @return the attribute map for the given feature
+   */
+  @SuppressWarnings("unchecked")
+  public static Map<String, Object> getAttributes(Feature f) {
+  	return (Map<String, Object>) f.getAttributes();
   }
 }
