@@ -99,8 +99,11 @@
   ([] (file-loader (str (.getAbsolutePath (File. ".")) "/")))
   ([absolute]
    (fn [ns]
-     (let [relative (str (s/replace ns \. \/) ".uvl")
-           path (str absolute "/" relative)]
+     (let [segments (s/split ns #"\.")
+           re (re-pattern (format "(.*?)%s/?$" (s/join (map #(format "(/%s)?" %) segments))))
+           trimmed-absolute (second (re-find re absolute))
+           relative (str (s/replace ns \. \/) ".uvl")
+           path (str trimmed-absolute "/" relative)]
        (slurp path)))))
 
 (def ^:dynamic *callback*)
