@@ -12,7 +12,7 @@
    (format "ns %s" (.getNamespace m))
    (prn-section "\nimports" (.getImports m))
    (prn-section "\nfeatures" (.getRootFeatures  m))
-   (prn-section "\nconstraints" (.getConstraints m))))
+   (prn-section "\nconstraints" (or (seq (.getOwnConstraints m)) (.getConstraints m)))))
 
 (defn Import-prn [i]
   (str (.getNamespace i) (when-not (= (.getNamespace i) (.getAlias i)) (format " as %s" (.getAlias i)))))

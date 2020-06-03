@@ -14,6 +14,7 @@
 
 (def ^:dynamic *features*)
 (def ^:dynamic *constraints*)
+(def ^:dynamic *own-constraints*)
 (def ^:dynamic *nsp*)
 
 (defn xf-ref [& ids] ;TODO resolve references
@@ -57,6 +58,7 @@
 
 (defn xf-constraints
   ([& constraints]
+   (swap! *own-constraints* concat constraints) 
    (swap! *constraints* concat constraints)
    [:constraints constraints])
   ([] [:constraints []]))

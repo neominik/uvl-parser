@@ -110,7 +110,8 @@
 
 (defn parse-submodel [s nsp nsps]
   (when-not (apply distinct? nsps) (throw (ex-info "Cyclic dependency" {:error (ParseError. 1 1 (str "Cyclic dependency detected! " nsps) [])})))
-  (binding [*nsp* nsp]
+  (binding [*nsp* nsp
+            *own-constraints* (atom [])]
     (let [tree (insta/parse parser (pre-lex s))
           transformed (insta/transform transform-map tree)]
       (when (insta/failure? transformed)
@@ -119,6 +120,7 @@
            (map #(parse-submodel (*callback* (.getNamespace %)) (str *nsp* (.getAlias %) ".") (conj nsps (.getNamespace %))))
            (into-array UVLModel)
            (.setSubmodels transformed))
+      (.setOwnConstraints transformed (into-array Object @*own-constraints*))
       transformed)))
 
 (defn parse

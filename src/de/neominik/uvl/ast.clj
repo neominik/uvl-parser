@@ -28,7 +28,8 @@
    ["[Lde.neominik.uvl.ast.Feature;" rootFeatures]
    [java.util.Map allFeatures]
    ["[Lde.neominik.uvl.ast.UVLModel;" submodels]
-   ["[Ljava.lang.Object;" constraints]])
+   ["[Ljava.lang.Object;" constraints]
+   ["[Ljava.lang.Object;" ownConstraints]])
 
 (defb Group
   [[String type]
