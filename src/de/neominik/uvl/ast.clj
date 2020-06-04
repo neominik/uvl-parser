@@ -33,6 +33,8 @@
 
 (defb Group
   [[String type]
+   [int lower]
+   [int upper]
    ["[Lde.neominik.uvl.ast.Feature;" children]])
 
 (defb Not

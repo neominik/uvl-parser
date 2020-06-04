@@ -52,13 +52,22 @@
 (defn xf-attributes [& keyvals]
   [:attributes (into {} keyvals)])
 
-(defn xf-group [type & children] (doto (Group.) (.setType type) (.setChildren (into-array Feature children))))
+(defn- to-number [n]
+  (if (= n "*") -1 (clojure.edn/read-string n)))
+(defn xf-cardinality
+  ([upper] (repeat 2 (to-number upper)))
+  ([lower upper] (map to-number [lower upper])))
+(defn xf-group [type & children]
+  (if (string? type)
+    (doto (Group.) (.setType type) (.setChildren (into-array Feature children)))
+    (let [[lower upper] type]
+      (doto (Group.) (.setType "cardinality") (.setLower lower) (.setUpper upper) (.setChildren (into-array Feature children))))))
 (defn xf-groups [& groups]
   [:groups groups])
 
 (defn xf-constraints
   ([& constraints]
-   (swap! *own-constraints* concat constraints) 
+   (swap! *own-constraints* concat constraints)
    (swap! *constraints* concat constraints)
    [:constraints constraints])
   ([] [:constraints []]))
@@ -83,6 +92,7 @@
                     :Number clojure.edn/read-string
                     :String clojure.edn/read-string
                     :Vector vector
+                    :Cardinality xf-cardinality
                     :Group xf-group
                     :Groups xf-groups
 

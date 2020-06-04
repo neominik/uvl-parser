@@ -5,8 +5,8 @@
   (:import [de.neominik.uvl.ast ParseError UVLModel]
            [java.io File]))
 
-(def ^:private indent "_{_")
-(def ^:private dedent "_}_")
+(def ^:private indent "_INDENT_")
+(def ^:private dedent "_DEDENT_")
 
 (defn- level [line]
   (if (s/blank? line)

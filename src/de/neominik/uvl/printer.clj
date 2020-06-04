@@ -17,6 +17,14 @@
 (defn Import-prn [i]
   (str (.getNamespace i) (when-not (= (.getNamespace i) (.getAlias i)) (format " as %s" (.getAlias i)))))
 
+(defn- prn-cardinality [lower upper]
+  (let [l (if (= lower upper) "" (str lower ".."))
+        u (if (= upper -1) "*" (str upper))]
+    (format "[%s%s]" l u)))
+(defn Group-prn [g]
+  (let [type (if (= (.getType g) "cardinality") (prn-cardinality (.getLower g) (.getUpper g)) (.getType g))]
+    (prn-section type (.getChildren g))))
+
 (defn- prn-item [[k v]]
   (str k (when-not (= true v) (str " " (pr-str v)))))
 (defn- prn-attrs [at-map]
@@ -25,10 +33,7 @@
       (format " {\n%s\n}" (indent (s/join ",\n" (map prn-item as))))
       (format " {%s}" (s/join ", " (map prn-item as))))))
 (defn Feature-prn [f]
-  (str (.getName f) (prn-attrs (.getAttributes f)) (when-let [gs (seq (.getGroups f))] (indent (s/join "\n" gs)))))
-
-(defn Group-prn [g]
-  (prn-section (.getType g) (.getChildren g)))
+  (str (.getName f) (prn-attrs (.getAttributes f)) (when-let [gs (seq (.getGroups f))] (indent (s/join "\n" (map Group-prn gs))))))
 
 (def ^:private priority (zipmap ["String" "Not" "And" "Or" "Impl" "Equiv"] (range)))
 (defn- needs-parens [parent child] (< (priority (.getSimpleName (class parent))) (priority (.getSimpleName (class child)))))

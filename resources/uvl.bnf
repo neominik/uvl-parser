@@ -18,7 +18,8 @@ Number = #'[+-]?(0|[1-9]\d*)(\.\d*)?([eE][+-]?\d+)?'
 String = #'"(?:[^"\\\n]|\\.)*"'
 Vector = <'['> (Value <','?>)* <']'>
 Groups = <indent> Group* <dedent>
-Group = ('or' | 'alternative' | 'mandatory' | 'optional') Children?
+Group = ('or' | 'alternative' | 'mandatory' | 'optional' | Cardinality) Children?
+Cardinality = <'['> (int <'..'>)? (int|'*') <']'>
 
 
 Constraints = <'constraints'> (<indent> Constraint+ <dedent>)?
@@ -36,8 +37,9 @@ Not = <'!'> term
 Reference = REF
 
 
-indent = '_{_'
-dedent = '_}_'
+indent = '_INDENT_'
+dedent = '_DEDENT_'
 <strictID> = #'(?!alternative|or|features|constraints|true|false|as|refer)[a-zA-Z][a-zA-Z_0-9]*'
 <ID> = #'(?!true|false)[a-zA-Z][a-zA-Z_0-9]*'
 REF = (ID <'.'>)* strictID
+<int> = #'0|[1-9]\d*'
