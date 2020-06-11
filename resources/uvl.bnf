@@ -2,9 +2,8 @@ FeatureModel = Ns? Imports? Features? Constraints?
 
 Ns = <'ns'> REF
 Imports = <'imports'> (<indent> Import+ <dedent>)?
-Import = REF (<'as'> As)? (<'refer'> Refer)?
+Import = REF (<'as'> As)?
 As = ID
-Refer = (<'['> (ID <','?>)* <']'>) | 'all'
 
 Features = <'features'> Children?
 <Children> = <indent> FeatureSpec+ <dedent>
