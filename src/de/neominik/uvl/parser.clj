@@ -3,7 +3,7 @@
             [clojure.string :as s]
             [de.neominik.uvl.transform :refer :all])
   (:import [de.neominik.uvl.ast ParseError UVLModel]
-           [java.io File]))
+           [java.io File FileNotFoundException]))
 
 (def ^:private indent "_INDENT_")
 (def ^:private dedent "_DEDENT_")
@@ -104,7 +104,9 @@
            trimmed-absolute (second (re-find re absolute))
            relative (str (s/replace ns \. \/) ".uvl")
            path (str trimmed-absolute "/" relative)]
-       (slurp path)))))
+       (try
+         (slurp path)
+         (catch FileNotFoundException e (throw (ex-info "Import error" {:error (ParseError. 1 1 (str "Unable to resolve import. Could not find file " (.getMessage e)) [])}))))))))
 
 (def ^:dynamic *callback*)
 
