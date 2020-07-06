@@ -9,7 +9,7 @@
 
 (defn UVLModel-prn [m]
   (str
-   (format "ns %s" (.getNamespace m))
+   (format "namespace %s" (.getNamespace m))
    (prn-section "\nimports" (.getImports m))
    (prn-section "\nfeatures" (.getRootFeatures  m))
    (prn-section "\nconstraints" (or (seq (.getOwnConstraints m)) (.getConstraints m)))))

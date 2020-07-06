@@ -1,6 +1,6 @@
 FeatureModel = Ns? Imports? Features? Constraints?
 
-Ns = <'ns'> REF
+Ns = <'namespace'> REF
 Imports = <'imports'> (<indent> Import+ <dedent>)?
 Import = REF (<'as'> As)?
 As = ID
