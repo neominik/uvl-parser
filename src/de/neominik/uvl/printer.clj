@@ -36,7 +36,10 @@
   (str (.getName f) (prn-attrs (.getAttributes f)) (when-let [gs (seq (.getGroups f))] (indent (s/join "\n" (map Group-prn gs))))))
 
 (def ^:private priority (zipmap ["String" "Not" "And" "Or" "Impl" "Equiv"] (range)))
-(defn- needs-parens [parent child] (< (priority (.getSimpleName (class parent))) (priority (.getSimpleName (class child)))))
+(defn- needs-parens [parent child]
+  (let [pc (.getSimpleName (class parent))
+        cc (.getSimpleName (class child))]
+    (or (< (priority pc) (priority cc)) (= "Not" pc cc))))
 (defn- prn-constraint [parent child]
   (if (needs-parens parent child)
     (format "(%s)" (str child))
