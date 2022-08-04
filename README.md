@@ -1,3 +1,6 @@
+## :warning: Development moved to [Universal-Variability-Language/uvl-parser](https://github.com/Universal-Variability-Language/uvl-parser/) :warning:
+Please refer to the fork for up to date releases and instructions.
+
 # UVL - Universal Variability Language
 
 This is a small default library used to parse and print the Universal Variability Language (UVL).
